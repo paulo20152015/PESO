@@ -10,8 +10,9 @@ window._ = require('lodash');
 try {
     window.Popper = require('popper.js').default;
     window.$ = window.jQuery = require('jquery');
-
+    require('admin-lte');
     require('bootstrap');
+    require('admin-lte/plugins/datatables/jquery.dataTables');
 } catch (e) {}
 
 /**
@@ -19,7 +20,7 @@ try {
  * to our Laravel back-end. This library automatically handles sending the
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
-
+window.moment = require('moment');
 window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';

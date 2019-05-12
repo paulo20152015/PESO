@@ -1,26 +1,20 @@
-
 <!DOCTYPE html>
-
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-
   <title>PESO</title>
-
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <title>{{ config('app.name', 'Laravel') }}</title>
-
     <link rel="stylesheet" href="{{asset('fontawesome/css/font-awesome.css')}}">
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/animation.css') }}" rel="stylesheet">
 </head>
 <body class="hold-transition sidebar-mini">
-<div class="wrapper">
-
+<div class="wrapper" id='app'>
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
     <!-- Left navbar links -->
@@ -29,19 +23,6 @@
         <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
       </li>
     </ul>
-
-    <!-- SEARCH FORM -->
-    <form class="form-inline ml-3">
-      <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-        <div class="input-group-append">
-          <button class="btn btn-navbar" type="submit">
-            <i class="fa fa-search"></i>
-          </button>
-        </div>
-      </div>
-    </form>
-
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       
@@ -68,20 +49,22 @@
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"><i
-            class="fa fa-th-large"></i></a>
+          <form action="/admin/logout" method="POST">
+              @csrf
+              <button type="submit" class="btn btn-navbar"><i
+                class="fa fa-sign-out"></i> logout</button>
+          </form>
       </li>
     </ul>
   </nav>
   <!-- /.navbar -->
-
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
+    <a href="/admin" class="brand-link">
       <img src="dist/img/AdminLTELogo.png" alt="logo" class="brand-image img-circle elevation-3"
            style="opacity: .8">
-      <span class="brand-text font-weight-light">PESO</span>
+      <span class="brand-text font-weight-light"></span>
     </a>
 
     <!-- Sidebar -->
@@ -89,13 +72,14 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <i class="fa fa-user-circle-o fa-2x  img-circle elevation-2" style="color:white"></i>
         </div>
         <div class="info">
-          <a href="#" class="d-block">Name of person</a>
+          
+          <a href="#" class="d-block">{{auth()->user()->username}}</a>
         </div>
       </div>
-
+      
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -110,16 +94,36 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="#" class="nav-link active">
-                  <i class="fa fa-circle-o nav-icon"></i>
-                  <p>Active Page</p>
+              @can('authorizeAdmin', App\Admin::class)
+              <li class="nav-item @yield('admin-active-triangle')">
+                <a href='/admin/Admins' class="nav-link @yield('admin-active')">
+                  <i class="fa fa-users nav-icon"></i>
+                  <p>Admins</p>
+                </a>
+              </li>
+              @endcan
+              <li class="nav-item @yield('companies-active-triangle')">
+                <a href="/admin/companies" class="nav-link @yield('companies-active')">
+                  <i class="fa fa-building nav-icon"></i>
+                  <p>Companies</p>
+                </a>
+              </li>
+              <li class="nav-item @yield('applicants-active-triangle')">
+                <a href="/admin/applicants" class="nav-link @yield('applicants-active')">
+                  <i class="fa fa-users nav-icon"></i>
+                  <p>Applicants/Employee</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="#" class="nav-link">
-                  <i class="fa fa-circle-o nav-icon"></i>
-                  <p>Inactive Page</p>
+                  <i class="fa fa-archive nav-icon"></i>
+                  <p>Archive</p>
+                </a>
+              </li>
+              <li class="nav-item @yield('account-active-triangle')">
+                <a href="/admin/account" class="nav-link @yield('account-active')">
+                  <i class="fa fa-cogs nav-icon"></i>
+                  <p>Account Settings</p>
                 </a>
               </li>
             </ul>
@@ -130,58 +134,28 @@
     </div>
     <!-- /.sidebar -->
   </aside>
-
+  @yield('aside')
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper mt-5">
-    <!-- Main content -->
-    <div class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="card card-primary card-outline">
-              <div class="card-header">
-                <h5 class="m-0">Content</h5>
-              </div>
-              <div class="card-body">
-                <h6 class="card-title">Content title</h6>
-
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-              </div>
-            </div>
-          </div>
-          <!-- /.col-md-6 -->
-        </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content -->
+  <div class="content-wrapper">
+  @yield('content')
   </div>
   <!-- /.content-wrapper -->
 
-  <!-- Control Sidebar -->
-  <aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-    <div class="p-3">
-      <h5>Title</h5>
-      <p>Sidebar content</p>
-    </div>
-  </aside>
-  <!-- /.control-sidebar -->
 
   <!-- Main Footer -->
   <footer class="main-footer">
     <!-- To the right -->
     <div class="float-right d-none d-sm-inline">
-      Anything you want
+      Public Employment Service Office Online Job Application Website.
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; </strong> All rights reserved.
+    <strong>Copyright &copy;</strong> All rights reserved 2019-2020.
   </footer>
 </div>
 <!-- ./wrapper -->
 
 <!-- Scripts -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 </body>
 </html>
